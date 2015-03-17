@@ -47,40 +47,40 @@ function bodyEnd(){
 function addAJAXScript($statementID){
     ?>
     <script>
-    $(document).ready(function(){
-        $("<?php echo "#form" . $statementID; ?>").submit(function(){
-         
-            // show that something is loading
-            $('<?php echo "#" . $statementID; ?>').html("<b>Loading response...</b>");
+        $(document).ready(function(){
+                $(document).on( "submit", "<?php echo "#form" . $statementID; ?>", function(){
+                 // original line :  $("<?php echo "#form" . $statementID; ?>").submit(function(){
+                    // show that something is loading
+                    $('<?php echo "#" . $statementID; ?>').html("<b>Loading response...</b>");
+                     
+                    /*
+                     * 'post_receiver.php' - where you will pass the form data
+                     * $(this).serialize() - to easily read form data
+                     * function(data){... - data contains the response from post_receiver.php
+                     */
+                    $.ajax({
+                        type: 'POST',
+                        url: 'index.php',
+                        data: $(this).serialize()
+                    })
+                    .done(function(data){
+                         
+                        // show the response
+                        $('<?php echo "#" . $statementID; ?>').html(data);
+                         
+                    })
+                    .fail(function() {
+                     
+                        // just in case posting your form failed
+                        alert( "Posting failed." );
+                         
+                    });
              
-            /*
-             * 'post_receiver.php' - where you will pass the form data
-             * $(this).serialize() - to easily read form data
-             * function(data){... - data contains the response from post_receiver.php
-             */
-            $.ajax({
-                type: 'POST',
-                url: 'index.php',
-                data: $(this).serialize()
-            })
-            .done(function(data){
-                 
-                // show the response
-                $('<?php echo "#" . $statementID; ?>').html(data);
-                 
-            })
-            .fail(function() {
+                    // to prevent refreshing the whole page page
+                    return false;
              
-                // just in case posting your form failed
-                alert( "Posting failed." );
-                 
+                });
             });
-     
-            // to prevent refreshing the whole page page
-            return false;
-     
-        });
-    });
     </script>
     <?php
 }
